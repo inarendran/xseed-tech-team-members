@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Balls with Images</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .ball-container {
+            position: absolute;
+            text-align: center;
+        }
+
+        .ball {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            border-radius: 50%;
+        }
+
+        .name {
+            color: #fff;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ball-container">
+        <div class="ball" style="background-image: url('./assets/nitish.png');"></div>
+        <div class="name">Nitish 1</div>
+    </div>
+    <div class="ball-container">
+        <div class="ball" style="background-image: url('./assets/nitish.png');"></div>
+        <div class="name">Nitish 2</div>
+    </div>
+    <div class="ball-container">
+        <div class="ball" style="background-image: url('./assets/nitish.png');"></div>
+        <div class="name">Nitish 3</div>
+    </div>
+
+    <script>
+        const containers = document.querySelectorAll('.ball-container');
+        const ballData = [];
+
+        containers.forEach(container => {
+            const ball = container.querySelector('.ball');
+            ballData.push({
+                element: container,
+                x: Math.random() * (window.innerWidth - 100),
+                y: Math.random() * (window.innerHeight - 100),
+                dx: (Math.random() * 1 + 0.5) * (Math.random() < 0.5 ? -1 : 1),
+                dy: (Math.random() * 1 + 0.5) * (Math.random() < 0.5 ? -1 : 1)
+            });
+        });
+
+        function moveBalls() {
+            ballData.forEach((data, i) => {
+                data.x += data.dx;
+                data.y += data.dy;
+
+                if (data.x <= 0 || data.x >= window.innerWidth - 100) {
+                    data.dx *= -1;
+                }
+
+                if (data.y <= 0 || data.y >= window.innerHeight - 100) {
+                    data.dy *= -1;
+                }
+
+                for (let j = i + 1; j < ballData.length; j++) {
+                    const other = ballData[j];
+                    const dist = Math.hypot(data.x - other.x, data.y - other.y);
+                    if (dist < 100) {
+                        const angle = Math.atan2(data.y - other.y, data.x - other.x);
+                        const overlap = 100 - dist;
+                        const halfOverlap = overlap / 2;
+
+                        data.x += Math.cos(angle) * halfOverlap;
+                        data.y += Math.sin(angle) * halfOverlap;
+                        other.x -= Math.cos(angle) * halfOverlap;
+                        other.y -= Math.sin(angle) * halfOverlap;
+
+                        [data.dx, other.dx] = [other.dx, data.dx];
+                        [data.dy, other.dy] = [other.dy, data.dy];
+                    }
+                }
+
+                data.element.style.left = data.x + 'px';
+                data.element.style.top = data.y + 'px';
+            });
+
+            requestAnimationFrame(moveBalls);
+        }
+
+        moveBalls();
+    </script>
+</body>
+</html>
