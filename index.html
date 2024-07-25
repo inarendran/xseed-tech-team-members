@@ -5,10 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XSEED ROCKSTAR TEAM</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
         body {
             margin: 0;
             overflow: hidden;
-            background: #000;
+            background: #ff6b6b; /* Fallback color */
+            background: -webkit-linear-gradient(135deg, #ff6b6b, #d23f57); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(135deg, #ff6b6b, #d23f57); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(135deg, #ff6b6b, #d23f57); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(135deg, #ff6b6b, #d23f57); /* Standard syntax */
+            font-family: 'Permanent Marker', cursive;
+            height: 100vh; /* Ensure it covers the entire viewport height */
+            width: 100vw; /* Ensure it covers the entire viewport width */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .ball-container {
@@ -21,12 +33,20 @@
             height: 100px;
             background-size: cover;
             border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .ball:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
         }
 
         .name {
             color: #fff;
-            font-size: 16px;
+            font-size: 18px;
             margin-top: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -53,6 +73,7 @@
             const ball = container.querySelector('.ball');
             ballData.push({
                 element: container,
+                ball: ball,
                 x: Math.random() * (window.innerWidth - 100),
                 y: Math.random() * (window.innerHeight - 100),
                 dx: (Math.random() * 1 + 0.5) * (Math.random() < 0.5 ? -1 : 1),
@@ -67,10 +88,18 @@
 
                 if (data.x <= 0 || data.x >= window.innerWidth - 100) {
                     data.dx *= -1;
+                    data.ball.style.transform = 'scale(1.2, 0.8)';
+                    setTimeout(() => {
+                        data.ball.style.transform = 'scale(1, 1)';
+                    }, 200);
                 }
 
                 if (data.y <= 0 || data.y >= window.innerHeight - 100) {
                     data.dy *= -1;
+                    data.ball.style.transform = 'scale(0.8, 1.2)';
+                    setTimeout(() => {
+                        data.ball.style.transform = 'scale(1, 1)';
+                    }, 200);
                 }
 
                 for (let j = i + 1; j < ballData.length; j++) {
@@ -88,6 +117,13 @@
 
                         [data.dx, other.dx] = [other.dx, data.dx];
                         [data.dy, other.dy] = [other.dy, data.dy];
+
+                        data.ball.style.transform = 'scale(0.8, 1.2)';
+                        other.ball.style.transform = 'scale(1.2, 0.8)';
+                        setTimeout(() => {
+                            data.ball.style.transform = 'scale(1, 1)';
+                            other.ball.style.transform = 'scale(1, 1)';
+                        }, 200);
                     }
                 }
 
