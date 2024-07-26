@@ -7,6 +7,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 
+        :root {
+            --ball-size: 10vmin; /* Ball size relative to viewport dimensions */
+        }
+
         body {
             margin: 0;
             overflow: hidden;
@@ -31,8 +35,8 @@
         }
 
         .ball {
-            width: 100px;
-            height: 100px;
+            width: var(--ball-size);
+            height: var(--ball-size);
             background-size: cover;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -45,11 +49,11 @@
         }
 
         .cap {
-            width: 40px;
-            height: 20px;
+            width: calc(var(--ball-size) / 2.5);
+            height: calc(var(--ball-size) / 5);
             position: absolute;
-            top: -20px; /* Adjusted position for the cap */
-            left: 30px;
+            top: calc(var(--ball-size) / -5); /* Adjusted position for the cap */
+            left: calc((var(--ball-size) - (var(--ball-size) / 2.5)) / 2);
             border-radius: 20px 20px 0 0;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             transition: top 0.3s ease-in-out;
@@ -86,13 +90,13 @@
 
         @keyframes jump {
             0% {
-                top: -20px;
+                top: calc(var(--ball-size) / -5);
             }
             50% {
-                top: -60px; /* Jump up */
+                top: calc(var(--ball-size) / -1.25); /* Jump up */
             }
             100% {
-                top: -20px; /* Sit back on the ball */
+                top: calc(var(--ball-size) / -5); /* Sit back on the ball */
             }
         }
 
@@ -103,15 +107,15 @@
 
         .name {
             color: #fff;
-            font-size: 18px;
-            margin-top: 8px;
+            font-size: calc(var(--ball-size) / 5);
+            margin-top: calc(var(--ball-size) / 12.5);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .subtitle {
             color: #e9e9e9;
-            font-size: 14px;
-            margin-top: 4px;
+            font-size: calc(var(--ball-size) / 7);
+            margin-top: calc(var(--ball-size) / 25);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
     </style>
@@ -285,25 +289,35 @@
         const containers = document.querySelectorAll('.ball-container');
         const ballData = [];
 
+        function updateBallSize() {
+            const ballSize = Math.min(window.innerWidth, window.innerHeight) * 0.1;
+            document.documentElement.style.setProperty('--ball-size', `${ballSize}px`);
+        }
+
+        window.addEventListener('resize', updateBallSize);
+        updateBallSize();
+
         containers.forEach(container => {
             const ball = container.querySelector('.ball');
             ballData.push({
                 element: container,
                 ball: ball,
                 cap: container.querySelector('.cap'),
-                x: Math.random() * (window.innerWidth - 100),
-                y: Math.random() * (window.innerHeight - 100),
+                x: Math.random() * (window.innerWidth - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ball-size'))),
+                y: Math.random() * (window.innerHeight - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ball-size'))),
                 dx: (Math.random() * 0.5 + 0.25) * (Math.random() < 0.5 ? -1 : 1), // Slowed down speed
                 dy: (Math.random() * 0.5 + 0.25) * (Math.random() < 0.5 ? -1 : 1)  // Slowed down speed
             });
         });
 
         function moveBalls() {
+            const ballSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ball-size'));
+
             ballData.forEach((data, i) => {
                 data.x += data.dx;
                 data.y += data.dy;
 
-                if (data.x <= 0 || data.x >= window.innerWidth - 100) {
+                if (data.x <= 0 || data.x >= window.innerWidth - ballSize) {
                     data.dx *= -1;
                     data.ball.style.transform = 'scale(1.2, 0.8)';
                     data.cap.classList.add('jump');
@@ -313,7 +327,7 @@
                     }, 500);
                 }
 
-                if (data.y <= 0 || data.y >= window.innerHeight - 100) {
+                if (data.y <= 0 || data.y >= window.innerHeight - ballSize) {
                     data.dy *= -1;
                     data.ball.style.transform = 'scale(0.8, 1.2)';
                     data.cap.classList.add('jump');
@@ -324,15 +338,15 @@
                 }
 
                 // Adjust position to keep within bounds
-                data.x = Math.max(0, Math.min(data.x, window.innerWidth - 100));
-                data.y = Math.max(0, Math.min(data.y, window.innerHeight - 100));
+                data.x = Math.max(0, Math.min(data.x, window.innerWidth - ballSize));
+                data.y = Math.max(0, Math.min(data.y, window.innerHeight - ballSize));
 
                 for (let j = i + 1; j < ballData.length; j++) {
                     const other = ballData[j];
                     const dist = Math.hypot(data.x - other.x, data.y - other.y);
-                    if (dist < 100) {
+                    if (dist < ballSize) {
                         const angle = Math.atan2(data.y - other.y, data.x - other.x);
-                        const overlap = 100 - dist;
+                        const overlap = ballSize - dist;
                         const halfOverlap = overlap / 2;
 
                         data.x += Math.cos(angle) * halfOverlap;
