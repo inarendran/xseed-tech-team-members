@@ -35,11 +35,52 @@
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            position: relative;
         }
 
         .ball:hover {
             transform: scale(1.1);
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .cap {
+            width: 40px;
+            height: 20px;
+            position: absolute;
+            top: -20px; /* Adjusted position for the cap */
+            left: 30px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: top 0.3s ease-in-out;
+        }
+
+        .cap.jump {
+            animation: jump 0.5s forwards;
+        }
+
+        .cap.backend {
+            background-color: #FF8C00;
+        }
+        .cap.frontend {
+            background-color: #4682B4;
+        }
+        .cap.devops {
+            background-color: #32CD32;
+        }
+        .cap.qa {
+            background-color: #FFD700;
+        }
+
+        @keyframes jump {
+            0% {
+                top: -20px;
+            }
+            50% {
+                top: -60px; /* Jump up */
+            }
+            100% {
+                top: -20px; /* Sit back on the ball */
+            }
         }
 
         .name {
@@ -53,19 +94,27 @@
 <body>
 
     <div class="ball-container">
-        <div class="ball" style="background-image: url('./assets/nitish.png');"></div>
+        <div class="ball" style="background-image: url('./assets/nitish.png');">
+            <div class="cap devops"></div>
+        </div>
         <div class="name">Nitish</div>
     </div>
     <div class="ball-container">
-        <div class="ball" style="background-image: url('./assets/shivam.png');"></div>
+        <div class="ball" style="background-image: url('./assets/shivam.png');">
+            <div class="cap qa"></div>
+        </div>
         <div class="name">Shivam</div>
     </div>
     <div class="ball-container">
-        <div class="ball" style="background-image: url('./assets/sai.jpeg');"></div>
+        <div class="ball" style="background-image: url('./assets/sai.jpeg');">
+            <div class="cap devops"></div>
+        </div>
         <div class="name">Sai Prakash</div>
     </div>
     <div class="ball-container">
-        <div class="ball" style="background-image: url('./assets/monish.jpg');"></div>
+        <div class="ball" style="background-image: url('./assets/monish.jpg');">
+            <div class="cap backend"></div>
+        </div>
         <div class="name">Monish</div>
     </div>
 
@@ -78,6 +127,7 @@
             ballData.push({
                 element: container,
                 ball: ball,
+                cap: container.querySelector('.cap'),
                 x: Math.random() * (window.innerWidth - 100),
                 y: Math.random() * (window.innerHeight - 100),
                 dx: (Math.random() * 1 + 0.5) * (Math.random() < 0.5 ? -1 : 1),
@@ -93,17 +143,21 @@
                 if (data.x <= 0 || data.x >= window.innerWidth - 100) {
                     data.dx *= -1;
                     data.ball.style.transform = 'scale(1.2, 0.8)';
+                    data.cap.classList.add('jump');
                     setTimeout(() => {
                         data.ball.style.transform = 'scale(1, 1)';
-                    }, 200);
+                        data.cap.classList.remove('jump');
+                    }, 500);
                 }
 
                 if (data.y <= 0 || data.y >= window.innerHeight - 100) {
                     data.dy *= -1;
                     data.ball.style.transform = 'scale(0.8, 1.2)';
+                    data.cap.classList.add('jump');
                     setTimeout(() => {
                         data.ball.style.transform = 'scale(1, 1)';
-                    }, 200);
+                        data.cap.classList.remove('jump');
+                    }, 500);
                 }
 
                 for (let j = i + 1; j < ballData.length; j++) {
@@ -124,10 +178,14 @@
 
                         data.ball.style.transform = 'scale(0.8, 1.2)';
                         other.ball.style.transform = 'scale(1.2, 0.8)';
+                        data.cap.classList.add('jump');
+                        other.cap.classList.add('jump');
                         setTimeout(() => {
                             data.ball.style.transform = 'scale(1, 1)';
                             other.ball.style.transform = 'scale(1, 1)';
-                        }, 200);
+                            data.cap.classList.remove('jump');
+                            other.cap.classList.remove('jump');
+                        }, 500);
                     }
                 }
 
