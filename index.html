@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 
         :root {
-            --ball-size: 10vmin; /* Ball size relative to viewport dimensions */
+            --ball-size: 12vmin; /* Increased ball size relative to viewport dimensions */
         }
 
         body {
@@ -290,7 +290,7 @@
         const ballData = [];
 
         function updateBallSize() {
-            const ballSize = Math.min(window.innerWidth, window.innerHeight) * 0.1;
+            const ballSize = Math.min(window.innerWidth, window.innerHeight) * 0.12; /* Increased ball size */
             document.documentElement.style.setProperty('--ball-size', `${ballSize}px`);
         }
 
