@@ -21,11 +21,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative; /* Added to position ball containers */
         }
 
         .ball-container {
             position: absolute;
             text-align: center;
+            transition: left 0.1s, top 0.1s; /* Smooth movement */
         }
 
         .ball {
@@ -35,7 +37,6 @@
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            position: relative;
         }
 
         .ball:hover {
@@ -237,6 +238,10 @@
                         data.cap.classList.remove('jump');
                     }, 500);
                 }
+
+                // Adjust position to keep within bounds
+                data.x = Math.max(0, Math.min(data.x, window.innerWidth - 100));
+                data.y = Math.max(0, Math.min(data.y, window.innerHeight - 100));
 
                 for (let j = i + 1; j < ballData.length; j++) {
                     const other = ballData[j];
